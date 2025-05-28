@@ -14,7 +14,6 @@ class NodeTree {
   endNodeName = "";
   constructor(nodeName) {
     this.nodeName = nodeName;
-    this.children = [];
   }
 }
 

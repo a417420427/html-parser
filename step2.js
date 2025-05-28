@@ -7,9 +7,8 @@ const TokenType = {
   END_TAG_NAME: 'END_TAG_NAME',
   END_TAG_CLOSE: 'END_TAG_CLOSE',
 
-  ATTRIBUTE_NAME_START: 'ATTRIBUTE_NAME_START',
+  BEFORE_ATTRIBUTE_NAME: 'BEFORE_ATTRIBUTE_NAME',
   ATTRIBUTE_NAME: 'ATTRIBUTE_NAME',
-  ATTRIBUTE_NAME_EQUAL: 'ATTRIBUTE_NAME_EQUAL',
   ATTRIBUTE_VALUE_START: 'ATTRIBUTE_VALUE_START',
   ATTRIBUTE_VALUE: 'ATTRIBUTE_VALUE',
   ATTRIBUTE_VALUE_END: 'ATTRIBUTE_VALUE_END',
@@ -23,7 +22,6 @@ class NodeTree {
   attributes = []
   constructor(nodeName) {
     this.nodeName = nodeName;
-    this.children = [];
   }
 }
 
@@ -52,7 +50,7 @@ function parseHtml(htmlString) {
       if(isAlphaNumeric(k)) {
         currentNode.nodeName += k
       } else if(isEmptyContent(k)) {
-        state = TokenType.ATTRIBUTE_NAME_START
+        state = TokenType.BEFORE_ATTRIBUTE_NAME
       }if(k === '>') {
         state = TokenType.DATA
       }
@@ -69,7 +67,7 @@ function parseHtml(htmlString) {
       } else if(k === '>') {
         state = TokenType.DATA
       }
-    } else if(state === TokenType.ATTRIBUTE_NAME_START) {
+    } else if(state === TokenType.BEFORE_ATTRIBUTE_NAME) {
       if(isAlphaNumeric(k)) {
         currentAttribute = {name: k, value: ''}
         
@@ -96,7 +94,7 @@ function parseHtml(htmlString) {
       }
     } else if(state === TokenType.ATTRIBUTE_VALUE_END) {
       if(isEmptyContent(k)) {
-        state = TokenType.ATTRIBUTE_NAME_START
+        state = TokenType.BEFORE_ATTRIBUTE_NAME
       } else if(k === '>') {
         state = TokenType.DATA
       }
@@ -114,5 +112,5 @@ function isEmptyContent(s) {
 }
 
 
-const htmlString = `<div attr="attrValue">hello world</div>`
+const htmlString = `<div attr="attrValue" test="123">hello world</div>`
 console.log(parseHtml(htmlString))
