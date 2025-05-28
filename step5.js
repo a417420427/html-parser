@@ -1,3 +1,5 @@
+const { extractAndParseStylesFromTree } = require("./parseCss");
+
 const TokenType = {
   TAG_OPEN: "TAG_OPEN",
   TAG_NAME: "TAG_NAME",
@@ -101,8 +103,9 @@ function parseHtml(htmlString) {
     } else if (state === TokenType.BEFORE_ATTRIBUTE_NAME) {
       if (isAlphaNumeric(k)) {
         currentAttribute = { name: k, value: "" };
-
         state = TokenType.ATTRIBUTE_NAME;
+      } else if (k === "/") {
+        state = TokenType.SELF_CLOSING_START_TAG;
       }
     } else if (state === TokenType.ATTRIBUTE_NAME) {
       if (isAlphaNumeric(k)) {
@@ -134,6 +137,7 @@ function parseHtml(htmlString) {
     } else if (state === TokenType.SELF_CLOSING_START_TAG) {
       if (k === ">") {
         stacks.pop();
+        currentNode = stacks[stacks.length - 1] || null;
         state = TokenType.DATA;
       }
     }
@@ -149,8 +153,18 @@ function isEmptyContent(s) {
   return /[\s\n\t\f]/.test(s);
 }
 
-const htmlString = `<div attr="attrValue">
-  <h3>标题</h3> 333 <br />
-  <div>文本内容</div>
-</div>`;
-console.log(parseHtml(htmlString));
+const htmlTree = parseHtml(`
+  <style>
+    .div {
+      border: 1px solid #000;
+    }
+    #main {
+      padding: 10px;
+    }
+  </style>
+  <div class="div" style="height: 100px;">Hello</div>
+`);
+
+const styledTree = extractAndParseStylesFromTree(htmlTree);
+
+console.log(styledTree)

@@ -152,7 +152,7 @@ function isEmptyContent(s) {
 }
 
 const htmlString = `<div attr="attrValue">
-  <h3>标题</h3> 333 <br />
-  <div>文本内容</div>
+  <h3 class="h3">标题</h3> 333 <br />
+  <div class="div2">文本内容</div>
 </div>`;
 console.log(parseHtml(htmlString));
