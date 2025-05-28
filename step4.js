@@ -19,7 +19,7 @@ class NodeTree {
   nodeName = "";
   endNodeName = "";
   children = [];
-  content = ''
+  content = "";
   attributes = [];
   constructor(nodeName) {
     this.nodeName = nodeName;
@@ -101,8 +101,9 @@ function parseHtml(htmlString) {
     } else if (state === TokenType.BEFORE_ATTRIBUTE_NAME) {
       if (isAlphaNumeric(k)) {
         currentAttribute = { name: k, value: "" };
-
         state = TokenType.ATTRIBUTE_NAME;
+      } else if (k === "/") {
+        state = TokenType.SELF_CLOSING_START_TAG;
       }
     } else if (state === TokenType.ATTRIBUTE_NAME) {
       if (isAlphaNumeric(k)) {
@@ -134,6 +135,7 @@ function parseHtml(htmlString) {
     } else if (state === TokenType.SELF_CLOSING_START_TAG) {
       if (k === ">") {
         stacks.pop();
+        currentNode = stacks[stacks.length - 1] || null;
         state = TokenType.DATA;
       }
     }
